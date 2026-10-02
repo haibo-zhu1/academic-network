@@ -9,9 +9,9 @@ const STATUS_COLORS = {
 // and the order shown in the right sidebar.
 const RELATION_ORDER = [
   "advisor-student",
-  "coauthor",
+  "collaborator",
   "same-institution",
-  "same-grad-school"
+  "same-phd-institution"
 ];
 
 const RELATION_META = {
@@ -19,16 +19,16 @@ const RELATION_META = {
     label: "Advisor / Student",
     icon: "assets/icons/icon_advisor_student.png"
   },
-  "coauthor": {
-    label: "Collaborator / Coauthor",
+  "collaborator": {
+    label: "Collaborator",
     icon: "assets/icons/icon_collaborator.png"
   },
   "same-institution": {
     label: "Same Institution",
     icon: "assets/icons/icon_same_institution_colleague.png"
   },
-  "same-grad-school": {
-    label: "Same Graduate School",
+  "same-phd-institution": {
+    label: "Same PhD Institution",
     icon: "assets/icons/icon_same_graduate_school.png"
   }
 };
@@ -131,13 +131,14 @@ function initGraph() {
       },
       {
         selector: "node.focused",
+        // Selected researcher: larger node, but only a subtle black ring.
         style: {
           "width": 62,
           "height": 62,
           "font-size": 13,
           "text-max-width": 145,
           "text-margin-y": 11,
-          "border-width": 5,
+          "border-width": 2.5,
           "border-color": "#111827"
         }
       },
@@ -221,17 +222,48 @@ function focusResearcher(id) {
   node.select();
 
   const neighborhood = node.closedNeighborhood();
+
+  // Fade everything that is not directly connected to the selected researcher.
   cy.elements().addClass("faded");
   neighborhood.removeClass("faded");
 
-  cy.animate({
-    center: { eles: node },
-    zoom: 1.05,
-    duration: 420
+  // Re-layout the selected researcher's local network every time it is clicked.
+  // The selected researcher is placed in the center, while direct connections
+  // spread around it in a large ring. This removes the need to manually drag
+  // nodes/edges apart after every refresh.
+  const localLayout = neighborhood.layout({
+    name: "concentric",
+    animate: true,
+    animationDuration: 520,
+    fit: false,
+    avoidOverlap: true,
+    minNodeSpacing: 135,
+    spacingFactor: 1.65,
+    startAngle: -Math.PI / 2,
+    sweep: 2 * Math.PI,
+    clockwise: true,
+    equidistant: true,
+    padding: 120,
+    concentric: ele => (ele.id() === id ? 2 : 1),
+    levelWidth: () => 1,
+    stop: () => {
+      // Make the focused neighborhood occupy most of the available graph area.
+      cy.fit(neighborhood, 90);
+
+      // Prevent very small neighborhoods from becoming excessively zoomed-in.
+      if (cy.zoom() > 1.15) {
+        cy.zoom(1.15);
+        cy.center(neighborhood);
+      }
+
+      updateEdgeIconMarkers();
+    }
   });
 
+  localLayout.run();
+
   showResearcher(id);
-  setTimeout(updateEdgeIconMarkers, 230);
+  setTimeout(updateEdgeIconMarkers, 80);
 }
 
 function createEdgeIconLayer() {
@@ -421,7 +453,7 @@ function relationshipSectionHtml(type, rel, source, target) {
 
   let detailHtml = "";
 
-  if (type === "coauthor") {
+  if (type === "collaborator") {
     const jointPapers = papers
       .filter(
         p => p.authors.includes(rel.source) && p.authors.includes(rel.target)
@@ -461,11 +493,11 @@ function relationshipSectionHtml(type, rel, source, target) {
     `;
   }
 
-  if (type === "same-grad-school") {
-    const sharedSchool = getSharedGraduateSchool(rel, source, target);
+  if (type === "same-phd-institution") {
+    const sharedSchool = getSharedPhdInstitution(rel, source, target);
     detailHtml = sharedSchool
       ? `<p class="shared-school">${escapeHtml(sharedSchool)}</p>`
-      : `<p class="relationship-note">Shared graduate school has not been added yet.</p>`;
+      : `<p class="relationship-note">Shared PhD institution has not been added yet.</p>`;
   }
 
   // Advisor/student intentionally has no extra detail below the label.
@@ -480,15 +512,15 @@ function relationshipSectionHtml(type, rel, source, target) {
   `;
 }
 
-function getSharedGraduateSchool(rel, source, target) {
-  if (rel.sharedGraduateSchool) return rel.sharedGraduateSchool;
+function getSharedPhdInstitution(rel, source, target) {
+  if (rel.sharedPhdInstitution) return rel.sharedPhdInstitution;
 
   if (
-    source.graduateSchool &&
-    target.graduateSchool &&
-    source.graduateSchool === target.graduateSchool
+    source.phdInstitution &&
+    target.phdInstitution &&
+    source.phdInstitution === target.phdInstitution
   ) {
-    return source.graduateSchool;
+    return source.phdInstitution;
   }
 
   return "";
@@ -512,7 +544,7 @@ function initSearch() {
         r.name.toLowerCase().includes(q) ||
         (r.institution || "").toLowerCase().includes(q) ||
         (r.position || "").toLowerCase().includes(q) ||
-        (r.graduateSchool || "").toLowerCase().includes(q)
+        (r.phdInstitution || "").toLowerCase().includes(q)
       )
       .slice(0, 10);
 
