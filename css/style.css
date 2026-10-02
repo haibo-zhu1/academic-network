@@ -132,27 +132,30 @@ body { overflow: hidden; }
 
 .edge-icon-strip {
   position: absolute;
-  transform: translate(-50%, -50%);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  min-height: 24px;
-  padding: 3px 5px;
-  border-radius: 7px;
-  background: rgba(255,255,255,0.94);
-  box-shadow: 0 1px 5px rgba(15,23,42,0.10);
-  transition: opacity 140ms ease, box-shadow 140ms ease;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: opacity 140ms ease;
+  transform-origin: center center;
 }
 
 .edge-icon-strip.selected {
-  box-shadow: 0 0 0 1px rgba(17,24,39,0.25), 0 2px 7px rgba(15,23,42,0.14);
+  background: transparent;
+  box-shadow: none;
 }
 
 .edge-icon-strip img {
   display: block;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
+  background: transparent;
+  transform-origin: center center;
 }
 
 .sidebar {
