@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Network</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Academic Network</h1>
+      <p>Explore researchers, institutions, mentorship, collaboration, and shared academic history.</p>
+    </div>
+
+    <div class="search-wrap">
+      <input id="searchInput" type="search" placeholder="Search researcher or institution..." autocomplete="off" />
+      <div id="searchResults" class="search-results hidden"></div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="graph-panel">
+      <div id="cy"></div>
+
+      <div class="legend">
+        <div class="legend-title">Researcher status</div>
+        <div><span class="dot student"></span> PhD Student</div>
+        <div><span class="dot ap"></span> Assistant Professor</div>
+        <div><span class="dot tenured"></span> Tenured Professor</div>
+        <div><span class="dot other"></span> Other</div>
+      </div>
+
+      <div class="hint">
+        Click a researcher to center them. Click a relationship line to inspect the relationship.
+      </div>
+    </section>
+
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-empty">
+        <div class="empty-icon">◎</div>
+        <h2>Select a researcher</h2>
+        <p>Click a node in the network or use search.</p>
+      </div>
+    </aside>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
