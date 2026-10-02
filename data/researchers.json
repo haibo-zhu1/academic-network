@@ -6,6 +6,7 @@
     "institution": "University of South Carolina",
     "position": "PhD Student",
     "education": "PhD in progress",
+    "graduateSchool": "University of South Carolina",
     "career": ["University of South Carolina — PhD Student"]
   },
   {
@@ -15,6 +16,7 @@
     "institution": "University of South Carolina",
     "position": "Professor",
     "education": "PhD, University X",
+    "graduateSchool": "University X",
     "career": ["University X — PhD", "University of South Carolina — Professor"]
   },
   {
@@ -24,6 +26,7 @@
     "institution": "University Y",
     "position": "Professor",
     "education": "PhD, University Z",
+    "graduateSchool": "University Z",
     "career": ["University Z — PhD", "University Y — Professor"]
   },
   {
@@ -33,6 +36,7 @@
     "institution": "University of South Carolina",
     "position": "Assistant Professor",
     "education": "PhD, University Y",
+    "graduateSchool": "University Y",
     "career": ["University Y — PhD", "University of South Carolina — Assistant Professor"]
   },
   {
@@ -42,6 +46,7 @@
     "institution": "University of South Carolina",
     "position": "PhD Student",
     "education": "PhD in progress",
+    "graduateSchool": "University of South Carolina",
     "career": ["University of South Carolina — PhD Student"]
   },
   {
@@ -50,8 +55,9 @@
     "status": "Tenured Professor",
     "institution": "University X",
     "position": "Associate Professor",
-    "education": "PhD, University Y",
-    "career": ["University Y — PhD", "University X — Associate Professor"]
+    "education": "PhD, University X",
+    "graduateSchool": "University X",
+    "career": ["University X — PhD", "University X — Associate Professor"]
   },
   {
     "id": "ap-f",
@@ -60,6 +66,7 @@
     "institution": "University Z",
     "position": "Assistant Professor",
     "education": "PhD, University X",
+    "graduateSchool": "University X",
     "career": ["University X — PhD", "University Z — Assistant Professor"]
   },
   {
@@ -69,6 +76,7 @@
     "institution": "University Y",
     "position": "Professor",
     "education": "PhD, University W",
+    "graduateSchool": "University W",
     "career": ["University W — PhD", "University Y — Professor"]
   }
 ]
