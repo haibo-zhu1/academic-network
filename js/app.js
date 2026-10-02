@@ -29,7 +29,7 @@ const RELATION_META = {
   },
   "same-grad-school": {
     label: "Same Graduate School",
-    icon: "assets/icons/icon_same_grad_sch.png"
+    icon: "assets/icons/icon_same_graduate_school.png"
   }
 };
 
@@ -95,16 +95,16 @@ function initGraph() {
     layout: {
       name: "cose",
       animate: true,
-      animationDuration: 650,
+      animationDuration: 700,
       randomize: false,
-      idealEdgeLength: 230,
-      nodeRepulsion: 15000,
-      edgeElasticity: 80,
-      nestingFactor: 1.1,
-      gravity: 0.18,
-      numIter: 1200,
-      padding: 120,
-      fit: true
+      idealEdgeLength: 380,
+      nodeRepulsion: 32000,
+      edgeElasticity: 45,
+      nestingFactor: 1.0,
+      gravity: 0.06,
+      numIter: 1800,
+      padding: 180,
+      fit: false
     },
     style: [
       {
@@ -200,14 +200,15 @@ function initGraph() {
 }
 
 function setInitialView() {
-  cy.fit(cy.elements(), 120);
+  // Fit once with generous margins so the whole graph remains visible.
+  cy.fit(cy.elements(), 220);
 
-  // Cytoscape may zoom in too much when the graph is small. Cap the opening view
-  // so the network stays airy rather than filling the screen with large nodes.
-  if (cy.zoom() > 0.78) {
-    cy.zoom(0.78);
-    cy.center();
-  }
+  // Keep the opening view intentionally small and airy.
+  const fittedZoom = cy.zoom();
+  const openingZoom = Math.min(fittedZoom, 0.58);
+
+  cy.zoom(openingZoom);
+  cy.center();
 }
 
 function focusResearcher(id) {
@@ -297,9 +298,23 @@ function updateEdgeIconMarkers() {
       ny *= -1;
     }
 
-    const offset = 18;
+    const offset = 16;
     marker.style.left = `${midX + nx * offset}px`;
     marker.style.top = `${midY + ny * offset}px`;
+
+    // Arrange the icon strip parallel to the relationship line.
+    let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    if (angle > 90) angle -= 180;
+    if (angle < -90) angle += 180;
+
+    marker.style.transform =
+      `translate(-50%, -50%) rotate(${angle}deg)`;
+
+    // Keep each icon upright while the row itself follows the edge.
+    marker.querySelectorAll("img").forEach(img => {
+      img.style.transform = `rotate(${-angle}deg)`;
+    });
+
     marker.style.opacity = edge.hasClass("faded") ? "0.13" : "1";
     marker.classList.toggle("selected", edge.selected());
   });
