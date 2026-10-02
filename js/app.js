@@ -5,17 +5,40 @@ const STATUS_COLORS = {
   "Other": "#64748b"
 };
 
-const RELATION_LABELS = {
-  "advisor-student": "Mentor / Student",
-  "coauthor": "Coauthor",
-  "same-institution": "Same Institution",
-  "same-alma-mater": "Same Alma Mater"
+// The order here controls BOTH the icons shown above each relationship line
+// and the order shown in the right sidebar.
+const RELATION_ORDER = [
+  "advisor-student",
+  "coauthor",
+  "same-institution",
+  "same-grad-school"
+];
+
+const RELATION_META = {
+  "advisor-student": {
+    label: "Advisor / Student",
+    icon: "assets/icons/icon_advisor_student.png"
+  },
+  "coauthor": {
+    label: "Collaborator / Coauthor",
+    icon: "assets/icons/icon_collaborator.png"
+  },
+  "same-institution": {
+    label: "Same Institution",
+    icon: "assets/icons/icon_same_institution_colleague.png"
+  },
+  "same-grad-school": {
+    label: "Same Graduate School",
+    icon: "assets/icons/icon_same_grad_sch.png"
+  }
 };
 
 let researchers = [];
 let relationships = [];
 let papers = [];
 let cy;
+let edgeIconLayer;
+const edgeIconMarkers = new Map();
 
 async function loadData() {
   const [researchersRes, relationshipsRes, papersRes] = await Promise.all([
@@ -24,9 +47,19 @@ async function loadData() {
     fetch("data/papers.json")
   ]);
 
+  if (!researchersRes.ok || !relationshipsRes.ok || !papersRes.ok) {
+    throw new Error("One or more data files could not be loaded.");
+  }
+
   researchers = await researchersRes.json();
   relationships = await relationshipsRes.json();
   papers = await papersRes.json();
+}
+
+function sortRelations(relations = []) {
+  return [...relations].sort(
+    (a, b) => RELATION_ORDER.indexOf(a) - RELATION_ORDER.indexOf(b)
+  );
 }
 
 function buildElements() {
@@ -45,8 +78,7 @@ function buildElements() {
       id: rel.id,
       source: rel.source,
       target: rel.target,
-      relationText: rel.relations.map(r => RELATION_LABELS[r] || r).join(" · "),
-      relations: rel.relations.join("|")
+      relations: sortRelations(rel.relations).join("|")
     }
   }));
 
@@ -57,39 +89,54 @@ function initGraph() {
   cy = cytoscape({
     container: document.getElementById("cy"),
     elements: buildElements(),
+    minZoom: 0.2,
+    maxZoom: 2.2,
+    wheelSensitivity: 0.2,
     layout: {
       name: "cose",
       animate: true,
+      animationDuration: 650,
       randomize: false,
-      idealEdgeLength: 150,
-      nodeRepulsion: 8500,
-      gravity: 0.35,
-      padding: 80
+      idealEdgeLength: 230,
+      nodeRepulsion: 15000,
+      edgeElasticity: 80,
+      nestingFactor: 1.1,
+      gravity: 0.18,
+      numIter: 1200,
+      padding: 120,
+      fit: true
     },
     style: [
       {
         selector: "node",
         style: {
           "background-color": "data(color)",
-          "width": 54,
-          "height": 54,
+          "width": 34,
+          "height": 34,
           "label": "data(label)",
-          "font-size": 12,
+          "font-size": 10,
           "font-weight": 650,
           "color": "#18202a",
           "text-valign": "bottom",
           "text-halign": "center",
-          "text-margin-y": 10,
+          "text-margin-y": 8,
           "text-wrap": "wrap",
-          "text-max-width": 120,
-          "border-width": 3,
+          "text-max-width": 105,
+          "border-width": 2.5,
           "border-color": "#ffffff",
-          "overlay-opacity": 0
+          "overlay-opacity": 0,
+          "transition-property": "width height border-width font-size",
+          "transition-duration": "220ms"
         }
       },
       {
-        selector: "node:selected",
+        selector: "node.focused",
         style: {
+          "width": 62,
+          "height": 62,
+          "font-size": 13,
+          "text-max-width": 145,
+          "text-margin-y": 11,
           "border-width": 5,
           "border-color": "#111827"
         }
@@ -97,79 +144,181 @@ function initGraph() {
       {
         selector: "edge",
         style: {
-          "width": 2.5,
+          "width": 2,
           "line-color": "#aeb7c4",
-          "curve-style": "bezier",
-          "label": "data(relationText)",
-          "font-size": 9,
-          "color": "#5f6875",
-          "text-background-color": "#ffffff",
-          "text-background-opacity": 0.88,
-          "text-background-padding": 3,
-          "text-rotation": "autorotate",
+          "curve-style": "straight",
           "overlay-opacity": 0
         }
       },
       {
         selector: "edge:selected",
         style: {
-          "width": 4,
-          "line-color": "#111827",
-          "color": "#111827"
+          "width": 3.5,
+          "line-color": "#111827"
         }
       },
       {
         selector: ".faded",
         style: {
-          "opacity": 0.16,
-          "text-opacity": 0.16
+          "opacity": 0.14,
+          "text-opacity": 0.14
         }
       }
     ]
   });
+
+  createEdgeIconLayer();
+  buildEdgeIconMarkers();
 
   cy.on("tap", "node", evt => {
     focusResearcher(evt.target.id());
   });
 
   cy.on("tap", "edge", evt => {
+    cy.elements().unselect();
+    evt.target.select();
     showRelationship(evt.target.id());
+    updateEdgeIconMarkers();
   });
 
   cy.on("tap", evt => {
     if (evt.target === cy) {
-      cy.elements().removeClass("faded");
+      cy.elements().removeClass("faded focused");
       cy.elements().unselect();
+      setInitialView();
+      updateEdgeIconMarkers();
     }
   });
 
-  setTimeout(() => focusResearcher("you", false), 350);
+  // Keep the DOM icon strip attached to each relationship line as the graph moves.
+  cy.on("render pan zoom position layoutstop", updateEdgeIconMarkers);
+
+  cy.one("layoutstop", () => {
+    setInitialView();
+    setTimeout(updateEdgeIconMarkers, 30);
+  });
 }
 
-function focusResearcher(id, animate = true) {
+function setInitialView() {
+  cy.fit(cy.elements(), 120);
+
+  // Cytoscape may zoom in too much when the graph is small. Cap the opening view
+  // so the network stays airy rather than filling the screen with large nodes.
+  if (cy.zoom() > 0.78) {
+    cy.zoom(0.78);
+    cy.center();
+  }
+}
+
+function focusResearcher(id) {
   const node = cy.getElementById(id);
   if (!node.length) return;
 
+  cy.elements().removeClass("focused");
   cy.elements().unselect();
+  node.addClass("focused");
   node.select();
 
   const neighborhood = node.closedNeighborhood();
-
   cy.elements().addClass("faded");
   neighborhood.removeClass("faded");
 
-  if (animate) {
-    cy.animate({
-      center: { eles: node },
-      zoom: 1.15,
-      duration: 450
-    });
-  } else {
-    cy.center(node);
-    cy.zoom(1.05);
-  }
+  cy.animate({
+    center: { eles: node },
+    zoom: 1.05,
+    duration: 420
+  });
 
   showResearcher(id);
+  setTimeout(updateEdgeIconMarkers, 230);
+}
+
+function createEdgeIconLayer() {
+  const graphPanel = document.querySelector(".graph-panel");
+  edgeIconLayer = document.createElement("div");
+  edgeIconLayer.id = "edgeIconLayer";
+  edgeIconLayer.setAttribute("aria-hidden", "true");
+  graphPanel.appendChild(edgeIconLayer);
+}
+
+function buildEdgeIconMarkers() {
+  edgeIconLayer.innerHTML = "";
+  edgeIconMarkers.clear();
+
+  relationships.forEach(rel => {
+    const marker = document.createElement("div");
+    marker.className = "edge-icon-strip";
+    marker.dataset.edgeId = rel.id;
+
+    sortRelations(rel.relations).forEach(type => {
+      const meta = RELATION_META[type];
+      if (!meta) return;
+
+      const img = document.createElement("img");
+      img.src = meta.icon;
+      img.alt = "";
+      img.title = meta.label;
+      marker.appendChild(img);
+    });
+
+    edgeIconLayer.appendChild(marker);
+    edgeIconMarkers.set(rel.id, marker);
+  });
+
+  updateEdgeIconMarkers();
+}
+
+function updateEdgeIconMarkers() {
+  if (!cy || !edgeIconLayer) return;
+
+  relationships.forEach(rel => {
+    const edge = cy.getElementById(rel.id);
+    const marker = edgeIconMarkers.get(rel.id);
+    if (!edge.length || !marker) return;
+
+    const source = edge.source().renderedPosition();
+    const target = edge.target().renderedPosition();
+
+    const midX = (source.x + target.x) / 2;
+    const midY = (source.y + target.y) / 2;
+
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const length = Math.hypot(dx, dy) || 1;
+
+    // Perpendicular offset: keep the icon strip beside/above the line,
+    // rather than letting the line run through the icons.
+    let nx = -dy / length;
+    let ny = dx / length;
+
+    // Prefer the visually upper side of the line for consistency.
+    if (ny > 0) {
+      nx *= -1;
+      ny *= -1;
+    }
+
+    const offset = 18;
+    marker.style.left = `${midX + nx * offset}px`;
+    marker.style.top = `${midY + ny * offset}px`;
+    marker.style.opacity = edge.hasClass("faded") ? "0.13" : "1";
+    marker.classList.toggle("selected", edge.selected());
+  });
+}
+
+function relationSummaryHtml(relationCounts) {
+  return RELATION_ORDER
+    .filter(type => relationCounts[type])
+    .map(type => {
+      const meta = RELATION_META[type];
+      return `
+        <div class="connection-summary-item">
+          <img class="relation-icon" src="${meta.icon}" alt="" />
+          <span>${escapeHtml(meta.label)}</span>
+          <strong>${relationCounts[type]}</strong>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 function showResearcher(id) {
@@ -181,21 +330,11 @@ function showResearcher(id) {
   );
 
   const relationCounts = {};
-
   connected.forEach(rel => {
     rel.relations.forEach(type => {
       relationCounts[type] = (relationCounts[type] || 0) + 1;
     });
   });
-
-  const relationSummary = Object.entries(relationCounts)
-    .map(
-      ([type, count]) =>
-        `<span class="relation-pill">${escapeHtml(
-          RELATION_LABELS[type] || type
-        )} · ${count}</span>`
-    )
-    .join("");
 
   const careerHtml = (person.career || [])
     .map(item => `<li>${escapeHtml(item)}</li>`)
@@ -203,26 +342,21 @@ function showResearcher(id) {
 
   document.getElementById("sidebar").innerHTML = `
     <div class="profile-kicker">Researcher</div>
-
     <h2>${escapeHtml(person.name)}</h2>
-
     <div class="role-line">
       ${escapeHtml(person.position)} · ${escapeHtml(person.institution)}
     </div>
 
     <div class="info-section">
       <h3>Profile</h3>
-
       <div class="info-row">
         <div class="label">Status</div>
         <div>${escapeHtml(person.status)}</div>
       </div>
-
       <div class="info-row">
         <div class="label">Institution</div>
         <div>${escapeHtml(person.institution)}</div>
       </div>
-
       <div class="info-row">
         <div class="label">Education</div>
         <div>${escapeHtml(person.education || "—")}</div>
@@ -231,8 +365,8 @@ function showResearcher(id) {
 
     <div class="info-section">
       <h3>Connections</h3>
-      <div class="relation-pills">
-        ${relationSummary || "No connections yet"}
+      <div class="connection-summary">
+        ${relationSummaryHtml(relationCounts) || "No connections yet"}
       </div>
     </div>
 
@@ -251,67 +385,98 @@ function showRelationship(edgeId) {
 
   const source = researchers.find(r => r.id === rel.source);
   const target = researchers.find(r => r.id === rel.target);
+  if (!source || !target) return;
 
-  const hasCoauthor = rel.relations.includes("coauthor");
-
-  const jointPapers = hasCoauthor
-    ? papers.filter(
-        p =>
-          p.authors.includes(rel.source) &&
-          p.authors.includes(rel.target)
-      )
-    : [];
-
-  const pills = rel.relations
-    .map(
-      type =>
-        `<span class="relation-pill">${escapeHtml(
-          RELATION_LABELS[type] || type
-        )}</span>`
-    )
+  const relationSections = sortRelations(rel.relations)
+    .map(type => relationshipSectionHtml(type, rel, source, target))
     .join("");
-
-  const papersHtml = jointPapers.length
-    ? `
-      <ul class="paper-list">
-        ${jointPapers
-          .sort((a, b) => b.year - a.year)
-          .map(
-            p =>
-              `<li>
-                <span class="paper-year">${p.year}</span>
-                ${escapeHtml(p.title)}
-              </li>`
-          )
-          .join("")}
-      </ul>
-    `
-    : `
-      <p style="font-size:13px;color:#6b7280;margin:0;">
-        ${
-          hasCoauthor
-            ? "No joint papers have been added yet."
-            : "This relationship is not a coauthor relationship."
-        }
-      </p>
-    `;
 
   document.getElementById("sidebar").innerHTML = `
     <div class="panel-kicker">Relationship</div>
-
-    <h2>
-      ${escapeHtml(source.name)} × ${escapeHtml(target.name)}
-    </h2>
-
-    <div class="relation-pills">
-      ${pills}
-    </div>
-
-    <div class="info-section">
-      <h3>${hasCoauthor ? "Joint Publications" : "Details"}</h3>
-      ${papersHtml}
+    <h2>${escapeHtml(source.name)} × ${escapeHtml(target.name)}</h2>
+    <div class="relationship-list">
+      ${relationSections}
     </div>
   `;
+}
+
+function relationshipSectionHtml(type, rel, source, target) {
+  const meta = RELATION_META[type];
+  if (!meta) return "";
+
+  let detailHtml = "";
+
+  if (type === "coauthor") {
+    const jointPapers = papers
+      .filter(
+        p => p.authors.includes(rel.source) && p.authors.includes(rel.target)
+      )
+      .sort((a, b) => b.year - a.year);
+
+    detailHtml = jointPapers.length
+      ? `
+        <ul class="paper-list relation-detail-list">
+          ${jointPapers
+            .map(
+              p => `
+                <li>
+                  <span class="paper-year">${escapeHtml(p.year)}</span>
+                  <span>${escapeHtml(p.title)}</span>
+                </li>
+              `
+            )
+            .join("")}
+        </ul>
+      `
+      : `<p class="relationship-note">No joint papers have been added yet.</p>`;
+  }
+
+  if (type === "same-institution") {
+    detailHtml = `
+      <div class="institution-pair">
+        <div>
+          <strong>${escapeHtml(source.name)}</strong>
+          <span>${escapeHtml(source.institution || "Not added")}</span>
+        </div>
+        <div>
+          <strong>${escapeHtml(target.name)}</strong>
+          <span>${escapeHtml(target.institution || "Not added")}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  if (type === "same-grad-school") {
+    const sharedSchool = getSharedGraduateSchool(rel, source, target);
+    detailHtml = sharedSchool
+      ? `<p class="shared-school">${escapeHtml(sharedSchool)}</p>`
+      : `<p class="relationship-note">Shared graduate school has not been added yet.</p>`;
+  }
+
+  // Advisor/student intentionally has no extra detail below the label.
+  return `
+    <section class="relationship-section">
+      <div class="relationship-heading">
+        <img class="relation-icon relation-icon-large" src="${meta.icon}" alt="" />
+        <span>${escapeHtml(meta.label)}</span>
+      </div>
+      ${detailHtml}
+    </section>
+  `;
+}
+
+function getSharedGraduateSchool(rel, source, target) {
+  if (rel.sharedGraduateSchool) return rel.sharedGraduateSchool;
+
+  if (
+    source.graduateSchool &&
+    target.graduateSchool &&
+    source.graduateSchool === target.graduateSchool
+  ) {
+    return source.graduateSchool;
+  }
+
+  return "";
 }
 
 function initSearch() {
@@ -328,11 +493,11 @@ function initSearch() {
     }
 
     const matches = researchers
-      .filter(
-        r =>
-          r.name.toLowerCase().includes(q) ||
-          r.institution.toLowerCase().includes(q) ||
-          (r.position || "").toLowerCase().includes(q)
+      .filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        (r.institution || "").toLowerCase().includes(q) ||
+        (r.position || "").toLowerCase().includes(q) ||
+        (r.graduateSchool || "").toLowerCase().includes(q)
       )
       .slice(0, 10);
 
@@ -342,7 +507,6 @@ function initSearch() {
           No matches
         </div>
       `;
-
       resultsBox.classList.remove("hidden");
       return;
     }
@@ -371,9 +535,7 @@ function initSearch() {
     const person = researchers.find(r => r.id === id);
 
     input.value = person ? person.name : "";
-
     resultsBox.classList.add("hidden");
-
     focusResearcher(id);
   });
 
@@ -396,19 +558,13 @@ function escapeHtml(value) {
 async function start() {
   try {
     await loadData();
-
     initGraph();
-
     initSearch();
   } catch (error) {
     console.error(error);
-
     document.getElementById("sidebar").innerHTML = `
       <h2>Could not load the data</h2>
-
-      <p>
-        The site could not load the JSON files.
-      </p>
+      <p>Please confirm that the JSON files exist and contain valid JSON.</p>
     `;
   }
 }
