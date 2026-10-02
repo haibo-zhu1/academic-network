@@ -1,82 +1,110 @@
 [
   {
-    "id": "you",
-    "name": "You",
+    "id": "haibo-zhu",
+    "name": "Haibo Zhu",
     "status": "PhD Student",
     "institution": "University of South Carolina",
-    "position": "PhD Student",
-    "education": "PhD in progress",
-    "graduateSchool": "University of South Carolina",
-    "career": ["University of South Carolina — PhD Student"]
+    "position": "PhD Student, Production/Operations Management",
+    "education": "PhD in Business Administration (Production/Operations Management), University of South Carolina, in progress; entered 2023",
+    "phdInstitution": "University of South Carolina",
+    "career": [
+      "University of South Carolina — PhD Student, 2023–present"
+    ]
   },
   {
-    "id": "advisor-a",
-    "name": "Advisor A",
+    "id": "necati-tereyagoglu",
+    "name": "Necati Tereyagoglu",
     "status": "Tenured Professor",
     "institution": "University of South Carolina",
-    "position": "Professor",
-    "education": "PhD, University X",
-    "graduateSchool": "University X",
-    "career": ["University X — PhD", "University of South Carolina — Professor"]
+    "position": "Associate Professor and Distinguished Moore Fellow",
+    "education": "PhD in Operations and Information Management, University of Pennsylvania (Wharton), 2012",
+    "phdInstitution": "University of Pennsylvania",
+    "career": [
+      "Georgia Institute of Technology — Assistant Professor, 2012–2019",
+      "University of South Carolina — Faculty, 2019–present",
+      "University of South Carolina — Associate Professor with tenure, 2021–present"
+    ]
   },
   {
-    "id": "professor-b",
-    "name": "Professor B",
+    "id": "sriram-venkataraman",
+    "name": "Sriram Venkataraman",
     "status": "Tenured Professor",
-    "institution": "University Y",
-    "position": "Professor",
-    "education": "PhD, University Z",
-    "graduateSchool": "University Z",
-    "career": ["University Z — PhD", "University Y — Professor"]
+    "institution": "University of South Carolina",
+    "position": "Professor of Management Science; Department Chair; Distinguished Moore Fellow",
+    "education": "PhD in Management (Supply Chain and Operations), Clemson University, 2013",
+    "phdInstitution": "Clemson University",
+    "career": [
+      "University of South Carolina — Assistant Professor, 2013–2019",
+      "University of South Carolina — Associate Professor with tenure, 2019–2025",
+      "University of South Carolina — Professor with tenure, 2026–present",
+      "University of South Carolina — Department Chair, 2025–present"
+    ]
   },
   {
-    "id": "ap-c",
-    "name": "Assistant Professor C",
+    "id": "blair-flicker",
+    "name": "Blair Flicker",
     "status": "Assistant Professor",
     "institution": "University of South Carolina",
-    "position": "Assistant Professor",
-    "education": "PhD, University Y",
-    "graduateSchool": "University Y",
-    "career": ["University Y — PhD", "University of South Carolina — Assistant Professor"]
+    "position": "Assistant Professor of Management Science",
+    "education": "PhD in Management Science, University of Texas at Dallas, 2019",
+    "phdInstitution": "University of Texas at Dallas",
+    "career": [
+      "University of South Carolina — Assistant Professor, 2019–present"
+    ]
   },
   {
-    "id": "student-d",
-    "name": "Student D",
-    "status": "PhD Student",
+    "id": "priyank-arora",
+    "name": "Priyank Arora",
+    "status": "Tenured Professor",
     "institution": "University of South Carolina",
-    "position": "PhD Student",
-    "education": "PhD in progress",
-    "graduateSchool": "University of South Carolina",
-    "career": ["University of South Carolina — PhD Student"]
+    "position": "Associate Professor and Moore Fellow",
+    "education": "PhD, Georgia Institute of Technology, 2018",
+    "phdInstitution": "Georgia Institute of Technology",
+    "career": [
+      "University of Massachusetts Amherst — Assistant Professor, 2018–2022",
+      "University of South Carolina — Assistant Professor, 2022–2024",
+      "University of South Carolina — Associate Professor with tenure, 2024–present"
+    ]
   },
   {
-    "id": "professor-e",
-    "name": "Professor E",
+    "id": "pelin-pekgun",
+    "name": "Pelin Pekgun",
     "status": "Tenured Professor",
-    "institution": "University X",
-    "position": "Associate Professor",
-    "education": "PhD, University X",
-    "graduateSchool": "University X",
-    "career": ["University X — PhD", "University X — Associate Professor"]
+    "institution": "Wake Forest University",
+    "position": "Thomas H. Davis Professor in Business; Professor of Analytics; Department Chair",
+    "education": "PhD in Industrial and Systems Engineering, Georgia Institute of Technology, 2007",
+    "phdInstitution": "Georgia Institute of Technology",
+    "career": [
+      "Georgia Institute of Technology — Visiting Assistant Professor, 2011–2012",
+      "University of South Carolina — Assistant Professor, 2012–2018",
+      "University of South Carolina — Associate Professor, 2018–2023",
+      "Wake Forest University — Professor of Analytics, 2024–present",
+      "Wake Forest University — Department Chair, 2025–present"
+    ]
   },
   {
-    "id": "ap-f",
-    "name": "Assistant Professor F",
+    "id": "campbell-clarkson",
+    "name": "Campbell Clarkson",
     "status": "Assistant Professor",
-    "institution": "University Z",
+    "institution": "Florida State University",
     "position": "Assistant Professor",
-    "education": "PhD, University X",
-    "graduateSchool": "University X",
-    "career": ["University X — PhD", "University Z — Assistant Professor"]
+    "education": "PhD in Business Administration, University of South Carolina, 2025",
+    "phdInstitution": "University of South Carolina",
+    "career": [
+      "Florida State University — Assistant Professor, 2025–present"
+    ]
   },
   {
-    "id": "professor-g",
-    "name": "Professor G",
+    "id": "senthil-veeraraghavan",
+    "name": "Senthil Veeraraghavan",
     "status": "Tenured Professor",
-    "institution": "University Y",
-    "position": "Professor",
-    "education": "PhD, University W",
-    "graduateSchool": "University W",
-    "career": ["University W — PhD", "University Y — Professor"]
+    "institution": "University of Pennsylvania",
+    "position": "Panasonic Professor of Manufacturing and Logistics; Professor of Operations, Information and Decisions",
+    "education": "PhD in Operations Management & Manufacturing, Carnegie Mellon University, 2004",
+    "phdInstitution": "Carnegie Mellon University",
+    "career": [
+      "University of Pennsylvania (Wharton) — Assistant Professor, 2004–2011",
+      "University of Pennsylvania (Wharton) — Faculty, 2011–present"
+    ]
   }
 ]

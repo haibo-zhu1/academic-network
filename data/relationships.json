@@ -1,50 +1,151 @@
 [
   {
-    "id": "r1",
-    "source": "you",
-    "target": "advisor-a",
-    "relations": ["advisor-student", "coauthor", "same-institution"]
+    "id": "r-necati-haibo",
+    "source": "necati-tereyagoglu",
+    "target": "haibo-zhu",
+    "relations": [
+      "advisor-student",
+      "collaborator",
+      "same-institution"
+    ]
   },
   {
-    "id": "r2",
-    "source": "you",
-    "target": "professor-b",
-    "relations": ["coauthor"]
+    "id": "r-pelin-haibo",
+    "source": "pelin-pekgun",
+    "target": "haibo-zhu",
+    "relations": [
+      "advisor-student"
+    ]
   },
   {
-    "id": "r3",
-    "source": "you",
-    "target": "ap-c",
-    "relations": ["same-institution"]
+    "id": "r-sriram-haibo",
+    "source": "sriram-venkataraman",
+    "target": "haibo-zhu",
+    "relations": [
+      "collaborator",
+      "same-institution"
+    ]
   },
   {
-    "id": "r4",
-    "source": "you",
-    "target": "student-d",
-    "relations": ["same-institution", "same-grad-school"]
+    "id": "r-blair-haibo",
+    "source": "blair-flicker",
+    "target": "haibo-zhu",
+    "relations": [
+      "collaborator",
+      "same-institution"
+    ]
   },
   {
-    "id": "r5",
-    "source": "advisor-a",
-    "target": "professor-e",
-    "relations": ["coauthor", "same-grad-school"]
+    "id": "r-priyank-haibo",
+    "source": "priyank-arora",
+    "target": "haibo-zhu",
+    "relations": [
+      "collaborator",
+      "same-institution"
+    ]
   },
   {
-    "id": "r6",
-    "source": "professor-b",
-    "target": "professor-g",
-    "relations": ["same-institution", "coauthor"]
+    "id": "r-campbell-haibo",
+    "source": "campbell-clarkson",
+    "target": "haibo-zhu",
+    "relations": [
+      "collaborator",
+      "same-phd-institution"
+    ]
   },
   {
-    "id": "r7",
-    "source": "professor-e",
-    "target": "ap-f",
-    "relations": ["advisor-student"]
+    "id": "r-necati-sriram",
+    "source": "necati-tereyagoglu",
+    "target": "sriram-venkataraman",
+    "relations": [
+      "collaborator",
+      "same-institution"
+    ]
   },
   {
-    "id": "r8",
-    "source": "ap-f",
-    "target": "advisor-a",
-    "relations": ["same-grad-school"]
+    "id": "r-necati-blair",
+    "source": "necati-tereyagoglu",
+    "target": "blair-flicker",
+    "relations": [
+      "collaborator",
+      "same-institution"
+    ]
+  },
+  {
+    "id": "r-necati-priyank",
+    "source": "necati-tereyagoglu",
+    "target": "priyank-arora",
+    "relations": [
+      "collaborator",
+      "same-institution"
+    ]
+  },
+  {
+    "id": "r-necati-campbell",
+    "source": "necati-tereyagoglu",
+    "target": "campbell-clarkson",
+    "relations": [
+      "advisor-student",
+      "collaborator"
+    ]
+  },
+  {
+    "id": "r-senthil-necati",
+    "source": "senthil-veeraraghavan",
+    "target": "necati-tereyagoglu",
+    "relations": [
+      "advisor-student",
+      "collaborator"
+    ]
+  },
+  {
+    "id": "r-sriram-blair",
+    "source": "sriram-venkataraman",
+    "target": "blair-flicker",
+    "relations": [
+      "same-institution"
+    ]
+  },
+  {
+    "id": "r-sriram-priyank",
+    "source": "sriram-venkataraman",
+    "target": "priyank-arora",
+    "relations": [
+      "collaborator",
+      "same-institution"
+    ]
+  },
+  {
+    "id": "r-sriram-campbell",
+    "source": "sriram-venkataraman",
+    "target": "campbell-clarkson",
+    "relations": [
+      "advisor-student",
+      "collaborator"
+    ]
+  },
+  {
+    "id": "r-blair-priyank",
+    "source": "blair-flicker",
+    "target": "priyank-arora",
+    "relations": [
+      "same-institution"
+    ]
+  },
+  {
+    "id": "r-priyank-campbell",
+    "source": "priyank-arora",
+    "target": "campbell-clarkson",
+    "relations": [
+      "collaborator"
+    ]
+  },
+  {
+    "id": "r-priyank-pelin",
+    "source": "priyank-arora",
+    "target": "pelin-pekgun",
+    "relations": [
+      "same-phd-institution"
+    ]
   }
 ]

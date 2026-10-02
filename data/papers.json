@@ -1,32 +1,75 @@
 [
   {
-    "id": "p1",
-    "title": "Example Joint Paper A",
+    "id": "p-abdm",
+    "title": "Universal Platforms, Unequal Access: Public Digital Health Initiatives in Developing Economies (Working Paper)",
     "year": 2026,
-    "authors": ["you", "advisor-a"]
+    "authors": [
+      "campbell-clarkson",
+      "haibo-zhu",
+      "priyank-arora",
+      "necati-tereyagoglu",
+      "sriram-venkataraman"
+    ]
   },
   {
-    "id": "p2",
-    "title": "Example Joint Paper B",
+    "id": "p-stvr",
+    "title": "Beyond Tourism: How Short-Term Rentals Shape Local Spending and Auxiliary Service Use (Working Paper)",
+    "year": 2026,
+    "authors": [
+      "haibo-zhu",
+      "priyank-arora",
+      "necati-tereyagoglu",
+      "sriram-venkataraman"
+    ]
+  },
+  {
+    "id": "p-clean-cooking",
+    "title": "Sun King Clean Cooking Project (Working Paper; title TBD)",
+    "year": 2026,
+    "authors": [
+      "haibo-zhu",
+      "necati-tereyagoglu",
+      "blair-flicker"
+    ]
+  },
+  {
+    "id": "p-mkrishi",
+    "title": "The Production Benefits of Personalized Agricultural Advice: A Case Study of mKrishi in the Buland Shahar District (Working Paper)",
     "year": 2025,
-    "authors": ["you", "advisor-a"]
+    "authors": [
+      "campbell-clarkson",
+      "necati-tereyagoglu",
+      "sriram-venkataraman"
+    ]
   },
   {
-    "id": "p3",
-    "title": "Example Joint Paper C",
-    "year": 2024,
-    "authors": ["you", "professor-b"]
+    "id": "p-free-not-enough",
+    "title": "When Free Is Not Enough: Layered Network Effects and Platform Competition (Working Paper)",
+    "year": 2026,
+    "authors": [
+      "campbell-clarkson",
+      "simin-li",
+      "necati-tereyagoglu",
+      "sriram-venkataraman"
+    ]
   },
   {
-    "id": "p4",
-    "title": "Example Joint Paper D",
-    "year": 2022,
-    "authors": ["advisor-a", "professor-e"]
+    "id": "p-conspicuous",
+    "title": "Selling to Conspicuous Consumers: Pricing, Production, and Sourcing Decisions",
+    "year": 2012,
+    "authors": [
+      "necati-tereyagoglu",
+      "senthil-veeraraghavan"
+    ]
   },
   {
-    "id": "p5",
-    "title": "Example Joint Paper E",
-    "year": 2023,
-    "authors": ["professor-b", "professor-g"]
+    "id": "p-theater-seats",
+    "title": "Pricing Theater Seats: The Value of Price Commitment and Monotone Discounting",
+    "year": 2017,
+    "authors": [
+      "necati-tereyagoglu",
+      "peter-fader",
+      "senthil-veeraraghavan"
+    ]
   }
 ]
