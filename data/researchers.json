@@ -1,1 +1,74 @@
-[]
+[
+  {
+    "id": "you",
+    "name": "You",
+    "status": "PhD Student",
+    "institution": "University of South Carolina",
+    "position": "PhD Student",
+    "education": "PhD in progress",
+    "career": ["University of South Carolina — PhD Student"]
+  },
+  {
+    "id": "advisor-a",
+    "name": "Advisor A",
+    "status": "Tenured Professor",
+    "institution": "University of South Carolina",
+    "position": "Professor",
+    "education": "PhD, University X",
+    "career": ["University X — PhD", "University of South Carolina — Professor"]
+  },
+  {
+    "id": "professor-b",
+    "name": "Professor B",
+    "status": "Tenured Professor",
+    "institution": "University Y",
+    "position": "Professor",
+    "education": "PhD, University Z",
+    "career": ["University Z — PhD", "University Y — Professor"]
+  },
+  {
+    "id": "ap-c",
+    "name": "Assistant Professor C",
+    "status": "Assistant Professor",
+    "institution": "University of South Carolina",
+    "position": "Assistant Professor",
+    "education": "PhD, University Y",
+    "career": ["University Y — PhD", "University of South Carolina — Assistant Professor"]
+  },
+  {
+    "id": "student-d",
+    "name": "Student D",
+    "status": "PhD Student",
+    "institution": "University of South Carolina",
+    "position": "PhD Student",
+    "education": "PhD in progress",
+    "career": ["University of South Carolina — PhD Student"]
+  },
+  {
+    "id": "professor-e",
+    "name": "Professor E",
+    "status": "Tenured Professor",
+    "institution": "University X",
+    "position": "Associate Professor",
+    "education": "PhD, University Y",
+    "career": ["University Y — PhD", "University X — Associate Professor"]
+  },
+  {
+    "id": "ap-f",
+    "name": "Assistant Professor F",
+    "status": "Assistant Professor",
+    "institution": "University Z",
+    "position": "Assistant Professor",
+    "education": "PhD, University X",
+    "career": ["University X — PhD", "University Z — Assistant Professor"]
+  },
+  {
+    "id": "professor-g",
+    "name": "Professor G",
+    "status": "Tenured Professor",
+    "institution": "University Y",
+    "position": "Professor",
+    "education": "PhD, University W",
+    "career": ["University W — PhD", "University Y — Professor"]
+  }
+]

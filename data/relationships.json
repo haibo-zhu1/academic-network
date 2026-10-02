@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "id": "r1",
+    "source": "you",
+    "target": "advisor-a",
+    "relations": ["advisor-student", "coauthor", "same-institution"]
+  },
+  {
+    "id": "r2",
+    "source": "you",
+    "target": "professor-b",
+    "relations": ["coauthor"]
+  },
+  {
+    "id": "r3",
+    "source": "you",
+    "target": "ap-c",
+    "relations": ["same-institution"]
+  },
+  {
+    "id": "r4",
+    "source": "you",
+    "target": "student-d",
+    "relations": ["same-institution", "same-alma-mater"]
+  },
+  {
+    "id": "r5",
+    "source": "advisor-a",
+    "target": "professor-e",
+    "relations": ["coauthor", "same-alma-mater"]
+  },
+  {
+    "id": "r6",
+    "source": "professor-b",
+    "target": "professor-g",
+    "relations": ["same-institution", "coauthor"]
+  },
+  {
+    "id": "r7",
+    "source": "professor-e",
+    "target": "ap-f",
+    "relations": ["advisor-student"]
+  },
+  {
+    "id": "r8",
+    "source": "ap-f",
+    "target": "advisor-a",
+    "relations": ["same-alma-mater"]
+  }
+]

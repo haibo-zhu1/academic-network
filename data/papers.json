@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "id": "p1",
+    "title": "Example Joint Paper A",
+    "year": 2026,
+    "authors": ["you", "advisor-a"]
+  },
+  {
+    "id": "p2",
+    "title": "Example Joint Paper B",
+    "year": 2025,
+    "authors": ["you", "advisor-a"]
+  },
+  {
+    "id": "p3",
+    "title": "Example Joint Paper C",
+    "year": 2024,
+    "authors": ["you", "professor-b"]
+  },
+  {
+    "id": "p4",
+    "title": "Example Joint Paper D",
+    "year": 2022,
+    "authors": ["advisor-a", "professor-e"]
+  },
+  {
+    "id": "p5",
+    "title": "Example Joint Paper E",
+    "year": 2023,
+    "authors": ["professor-b", "professor-g"]
+  }
+]
