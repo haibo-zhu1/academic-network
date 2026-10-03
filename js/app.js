@@ -34,6 +34,8 @@ const RELATION_META = {
 };
 
 const HOME_RESEARCHER_ID = "haibo-zhu";
+const MIN_NODE_DISTANCE = 95;
+const COLLISION_PASSES = 8;
 
 let researchers = [];
 let relationships = [];
@@ -215,6 +217,89 @@ function setInitialView() {
   cy.center();
 }
 
+
+function resolveNodeOverlaps(focusedId) {
+  const nodes = cy.nodes().toArray();
+  const focusedNode = cy.getElementById(focusedId);
+
+  const directIds = new Set(
+    focusedNode.connectedEdges().connectedNodes().map(n => n.id())
+  );
+
+  function priority(node) {
+    if (node.id() === focusedId) return 3;
+    if (directIds.has(node.id())) return 2;
+    return 1;
+  }
+
+  for (let pass = 0; pass < COLLISION_PASSES; pass++) {
+    let movedSomething = false;
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+
+        const ra = a.renderedPosition();
+        const rb = b.renderedPosition();
+
+        let dx = rb.x - ra.x;
+        let dy = rb.y - ra.y;
+        let distance = Math.hypot(dx, dy);
+
+        if (distance >= MIN_NODE_DISTANCE) continue;
+
+        if (distance < 0.01) {
+          const angle = ((i * 37 + j * 71) % 360) * Math.PI / 180;
+          dx = Math.cos(angle);
+          dy = Math.sin(angle);
+          distance = 1;
+        }
+
+        const ux = dx / distance;
+        const uy = dy / distance;
+        const requiredMove =
+          (MIN_NODE_DISTANCE - distance) / cy.zoom();
+
+        const pa = priority(a);
+        const pb = priority(b);
+
+        if (pa > pb) {
+          const pos = b.position();
+          b.position({
+            x: pos.x + ux * requiredMove,
+            y: pos.y + uy * requiredMove
+          });
+        } else if (pb > pa) {
+          const pos = a.position();
+          a.position({
+            x: pos.x - ux * requiredMove,
+            y: pos.y - uy * requiredMove
+          });
+        } else {
+          const move = requiredMove / 2;
+          const posa = a.position();
+          const posb = b.position();
+
+          a.position({
+            x: posa.x - ux * move,
+            y: posa.y - uy * move
+          });
+
+          b.position({
+            x: posb.x + ux * move,
+            y: posb.y + uy * move
+          });
+        }
+
+        movedSomething = true;
+      }
+    }
+
+    if (!movedSomething) break;
+  }
+}
+
 function focusResearcher(id) {
   const node = cy.getElementById(id);
   if (!node.length) return;
@@ -258,6 +343,12 @@ function focusResearcher(id) {
         cy.zoom(1.15);
         cy.center(neighborhood);
       }
+
+      // Only fix genuine node collisions; keep the existing layout otherwise.
+      resolveNodeOverlaps(id);
+
+      // Keep the selected researcher centered after small overlap corrections.
+      cy.center(node);
 
       updateEdgeIconMarkers();
     }
