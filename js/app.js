@@ -354,102 +354,46 @@ function focusResearcher(id) {
   node.select();
 
   const neighborhood = node.closedNeighborhood();
+  const neighborhoodNodes = neighborhood.nodes();
+  const peripheralNodes = cy.nodes().difference(neighborhoodNodes);
 
-  // Keep the selected researcher and direct connections prominent.
+  // Fade everything that is not directly connected to the selected researcher.
   cy.elements().addClass("faded");
   neighborhood.removeClass("faded");
 
-  // ------------------------------------------------------------
-  // Build graph-distance rings from the selected researcher.
-  //
-  // distance 0 = selected researcher
-  // distance 1 = direct relationship
-  // distance 2 = one researcher away
-  // etc.
-  //
-  // Every node participates in the SAME layout. This makes the
-  // behavior stable when new researchers are added and prevents
-  // individual nodes from being pushed off-screen.
-  // ------------------------------------------------------------
-  const distances = new Map();
-  const queue = [id];
-  distances.set(id, 0);
-
-  while (queue.length > 0) {
-    const currentId = queue.shift();
-    const currentDistance = distances.get(currentId);
-    const currentNode = cy.getElementById(currentId);
-
-    currentNode.connectedEdges().forEach(edge => {
-      const sourceId = edge.source().id();
-      const targetId = edge.target().id();
-      const nextId = sourceId === currentId ? targetId : sourceId;
-
-      if (!distances.has(nextId)) {
-        distances.set(nextId, currentDistance + 1);
-        queue.push(nextId);
-      }
-    });
-  }
-
-  let maxConnectedDistance = 0;
-
-  distances.forEach(distance => {
-    maxConnectedDistance = Math.max(maxConnectedDistance, distance);
-  });
-
-  // Any disconnected researcher goes on the outermost ring.
-  const disconnectedDistance = maxConnectedDistance + 1;
-
-  cy.nodes().forEach(n => {
-    if (!distances.has(n.id())) {
-      distances.set(n.id(), disconnectedDistance);
-    }
-  });
-
-  const maxDistance = Math.max(
-    ...Array.from(distances.values())
-  );
-
-  // Higher scores are closer to the center.
-  // Use wide score gaps so Cytoscape reliably creates one ring
-  // for each graph-distance level.
-  const ringScore = n => {
-    const distance = distances.get(n.id()) ?? disconnectedDistance;
-    return (maxDistance - distance + 1) * 100;
-  };
-
-  const globalLayout = cy.nodes().layout({
+  // Re-layout ONLY the selected researcher and direct-neighbor NODES.
+  // Edges are deliberately excluded from the layout collection.
+  const localLayout = neighborhoodNodes.layout({
     name: "concentric",
     animate: true,
-    animationDuration: 560,
+    animationDuration: 520,
     fit: false,
     avoidOverlap: true,
-
-    // Enough room for the circles to be clearly separated without
-    // making the whole network excessively sparse.
-    minNodeSpacing: 90,
-    spacingFactor: 1.35,
-
+    minNodeSpacing: 135,
+    spacingFactor: 1.65,
     startAngle: -Math.PI / 2,
     sweep: 2 * Math.PI,
     clockwise: true,
     equidistant: true,
-    padding: 90,
-
-    concentric: ringScore,
-    levelWidth: () => 50,
+    padding: 120,
+    concentric: ele => (ele.id() === id ? 2 : 1),
+    levelWidth: () => 1,
 
     stop: () => {
-      // One final, light overlap pass across all nodes.
-      resolveNodeOverlaps(id, cy.nodes());
+      // Resolve collisions only inside the focused local network.
+      // Peripheral researchers are not pushed away unpredictably.
+      resolveNodeOverlaps(id, neighborhoodNodes);
 
-      // Fit the complete network into the visible graph area.
-      cy.fit(cy.nodes(), 78);
+      // Keep every other researcher visible on a stable outer ring.
+      placePeripheralNodes(node, neighborhoodNodes, peripheralNodes);
 
-      // Avoid excessive zoom when the network is still small.
-      if (cy.zoom() > 1.12) {
-        cy.zoom(1.12);
+      // Fit ALL nodes into the graph panel so no researcher can disappear
+      // outside the visible area when someone else is selected.
+      cy.fit(cy.nodes(), 72);
+
+      // Prevent tiny graphs from becoming excessively enlarged.
+      if (cy.zoom() > 1.15) {
+        cy.zoom(1.15);
         cy.center(cy.nodes());
       }
 
@@ -457,7 +401,7 @@ function focusResearcher(id) {
     }
   });
 
-  globalLayout.run();
+  localLayout.run();
 
   showResearcher(id);
   setTimeout(updateEdgeIconMarkers, 80);
