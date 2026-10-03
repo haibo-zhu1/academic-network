@@ -153,5 +153,13 @@
     "relations": [
       "same-phd-institution"
     ]
-  }
+  },
+  {
+  "id": "r-aleda-sriram",
+  "source": "aleda-roth",
+  "target": "sriram-venkataraman",
+  "relations": [
+    "advisor-student"
+  ]
+}
 ]
