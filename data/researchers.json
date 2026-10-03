@@ -106,5 +106,17 @@
       "University of Pennsylvania (Wharton) — Assistant Professor, 2004–2011",
       "University of Pennsylvania (Wharton) — Faculty, 2011–present"
     ]
+  },
+  {
+    "id": "samin-shaghaghi",
+    "name": "Samin Shaghaghi",
+    "status": "PhD Student",
+    "institution": "University of South Carolina",
+    "position": "PhD Student, Production/Operations Management",
+    "education": "PhD in Business Administration (Production/Operations Management), University of South Carolina, in progress; entered 2024",
+    "phdInstitution": "University of South Carolina",
+    "career": [
+      "University of South Carolina — PhD Student, 2024–present"
+    ]
   }
 ]
