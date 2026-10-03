@@ -36,6 +36,8 @@ const RELATION_META = {
 let researchers = [];
 let relationships = [];
 let papers = [];
+const HOME_RESEARCHER_ID = "haibo-zhu";
+
 let cy;
 let edgeIconLayer;
 const edgeIconMarkers = new Map();
@@ -195,7 +197,8 @@ function initGraph() {
   cy.on("render pan zoom position layoutstop", updateEdgeIconMarkers);
 
   cy.one("layoutstop", () => {
-    setInitialView();
+    // Open the page in the exact same focused state as clicking Haibo.
+    focusResearcher(HOME_RESEARCHER_ID);
     setTimeout(updateEdgeIconMarkers, 30);
   });
 }
