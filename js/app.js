@@ -240,11 +240,11 @@ function resolveNodeOverlaps(focusedId, nodeCollection = cy.nodes()) {
         const a = nodes[i];
         const b = nodes[j];
 
-        const ra = a.renderedPosition();
-        const rb = b.renderedPosition();
+        const paModel = a.position();
+        const pbModel = b.position();
 
-        let dx = rb.x - ra.x;
-        let dy = rb.y - ra.y;
+        let dx = pbModel.x - paModel.x;
+        let dy = pbModel.y - paModel.y;
         let distance = Math.hypot(dx, dy);
 
         if (distance >= MIN_NODE_DISTANCE) continue;
@@ -259,7 +259,7 @@ function resolveNodeOverlaps(focusedId, nodeCollection = cy.nodes()) {
         const ux = dx / distance;
         const uy = dy / distance;
         const requiredMove =
-          (MIN_NODE_DISTANCE - distance) / cy.zoom();
+          MIN_NODE_DISTANCE - distance;
 
         const pa = priority(a);
         const pb = priority(b);
