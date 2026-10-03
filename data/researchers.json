@@ -118,5 +118,21 @@
     "career": [
       "University of South Carolina — PhD Student, 2024–present"
     ]
-  }
+  },
+  {
+  "id": "aleda-roth",
+  "name": "Aleda V. Roth",
+  "status": "Tenured Professor",
+  "institution": "Clemson University",
+  "position": "Burlington Industries Distinguished Professor of Supply Chain Management",
+  "education": "PhD in Production and Operations Management, The Ohio State University, 1986",
+  "phdInstitution": "The Ohio State University",
+  "career": [
+    "Boston University — Assistant Professor",
+    "Duke University — Associate Professor",
+    "University of North Carolina at Chapel Hill — Professor",
+    "Arizona State University — W. P. Carey Endowed Chair in Supply Chain Management",
+    "Clemson University — Burlington Industries Distinguished Professor of Supply Chain Management"
+  ]
+}
 ]
