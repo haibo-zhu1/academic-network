@@ -5,8 +5,7 @@
     "target": "haibo-zhu",
     "relations": [
       "advisor-student",
-      "collaborator",
-      "same-institution"
+      "collaborator"
     ]
   },
   {
@@ -14,7 +13,7 @@
     "source": "pelin-pekgun",
     "target": "haibo-zhu",
     "relations": [
-      "advisor-student"
+      "collaborator"
     ]
   },
   {
@@ -23,8 +22,7 @@
     "target": "haibo-zhu",
     "relations": [
       "advisor-student",
-      "collaborator",
-      "same-institution"
+      "collaborator"
     ]
   },
   {
@@ -32,8 +30,7 @@
     "source": "blair-flicker",
     "target": "haibo-zhu",
     "relations": [
-      "collaborator",
-      "same-institution"
+      "collaborator"
     ]
   },
   {
@@ -41,8 +38,7 @@
     "source": "priyank-arora",
     "target": "haibo-zhu",
     "relations": [
-      "collaborator",
-      "same-institution"
+      "collaborator"
     ]
   },
   {
@@ -104,6 +100,7 @@
     "source": "sriram-venkataraman",
     "target": "blair-flicker",
     "relations": [
+      "collaborator",
       "same-institution"
     ]
   },
