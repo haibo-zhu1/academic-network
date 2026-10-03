@@ -218,8 +218,8 @@ function setInitialView() {
 }
 
 
-function resolveNodeOverlaps(focusedId) {
-  const nodes = cy.nodes().toArray();
+function resolveNodeOverlaps(focusedId, nodeCollection = cy.nodes()) {
+  const nodes = nodeCollection.toArray();
   const focusedNode = cy.getElementById(focusedId);
 
   const directIds = new Set(
@@ -300,6 +300,50 @@ function resolveNodeOverlaps(focusedId) {
   }
 }
 
+function placePeripheralNodes(focusedNode, neighborhoodNodes, peripheralNodes) {
+  if (!peripheralNodes.length) return;
+
+  const center = focusedNode.position();
+
+  // Measure the focused local network, then place all non-direct nodes on a
+  // second, larger ring around it. This keeps every researcher visible while
+  // preserving the selected researcher's local structure.
+  const box = neighborhoodNodes.boundingBox({
+    includeLabels: false,
+    includeOverlays: false
+  });
+
+  const localRadius = Math.max(box.w, box.h) / 2;
+  const minOuterRadius = 245;
+  const radiusFromLocalNetwork = localRadius + 115;
+  const radiusFromNodeCount =
+    (peripheralNodes.length * 95) / (2 * Math.PI);
+
+  const radius = Math.max(
+    minOuterRadius,
+    radiusFromLocalNetwork,
+    radiusFromNodeCount
+  );
+
+  const count = peripheralNodes.length;
+  const angleStep = (2 * Math.PI) / count;
+
+  // Offset the outer ring slightly so its nodes do not sit directly behind
+  // the inner-ring nodes.
+  const startAngle = -Math.PI / 2 + (count > 1 ? angleStep / 2 : Math.PI);
+
+  cy.batch(() => {
+    peripheralNodes.forEach((n, index) => {
+      const angle = startAngle + index * angleStep;
+
+      n.position({
+        x: center.x + Math.cos(angle) * radius,
+        y: center.y + Math.sin(angle) * radius
+      });
+    });
+  });
+}
+
 function focusResearcher(id) {
   const node = cy.getElementById(id);
   if (!node.length) return;
@@ -310,16 +354,16 @@ function focusResearcher(id) {
   node.select();
 
   const neighborhood = node.closedNeighborhood();
+  const neighborhoodNodes = neighborhood.nodes();
+  const peripheralNodes = cy.nodes().difference(neighborhoodNodes);
 
   // Fade everything that is not directly connected to the selected researcher.
   cy.elements().addClass("faded");
   neighborhood.removeClass("faded");
 
-  // Re-layout the selected researcher's local network every time it is clicked.
-  // The selected researcher is placed in the center, while direct connections
-  // spread around it in a large ring. This removes the need to manually drag
-  // nodes/edges apart after every refresh.
-  const localLayout = neighborhood.layout({
+  // Re-layout ONLY the selected researcher and direct-neighbor NODES.
+  // Edges are deliberately excluded from the layout collection.
+  const localLayout = neighborhoodNodes.layout({
     name: "concentric",
     animate: true,
     animationDuration: 520,
@@ -334,21 +378,24 @@ function focusResearcher(id) {
     padding: 120,
     concentric: ele => (ele.id() === id ? 2 : 1),
     levelWidth: () => 1,
-    stop: () => {
-      // Make the focused neighborhood occupy most of the available graph area.
-      cy.fit(neighborhood, 90);
 
-      // Prevent very small neighborhoods from becoming excessively zoomed-in.
+    stop: () => {
+      // Resolve collisions only inside the focused local network.
+      // Peripheral researchers are not pushed away unpredictably.
+      resolveNodeOverlaps(id, neighborhoodNodes);
+
+      // Keep every other researcher visible on a stable outer ring.
+      placePeripheralNodes(node, neighborhoodNodes, peripheralNodes);
+
+      // Fit ALL nodes into the graph panel so no researcher can disappear
+      // outside the visible area when someone else is selected.
+      cy.fit(cy.nodes(), 72);
+
+      // Prevent tiny graphs from becoming excessively enlarged.
       if (cy.zoom() > 1.15) {
         cy.zoom(1.15);
-        cy.center(neighborhood);
+        cy.center(cy.nodes());
       }
-
-      // Only fix genuine node collisions; keep the existing layout otherwise.
-      resolveNodeOverlaps(id);
-
-      // Keep the selected researcher centered after small overlap corrections.
-      cy.center(node);
 
       updateEdgeIconMarkers();
     }
