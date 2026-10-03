@@ -60,6 +60,14 @@
     ]
   },
   {
+    "id": "r-necati-pelin",
+    "source": "necati-tereyagoglu",
+    "target": "pelin-pekgun",
+    "relations": [
+      "collaborator"
+    ]
+  },
+  {
     "id": "r-necati-blair",
     "source": "necati-tereyagoglu",
     "target": "blair-flicker",
