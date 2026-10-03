@@ -22,6 +22,7 @@
     "source": "sriram-venkataraman",
     "target": "haibo-zhu",
     "relations": [
+      "advisor-student",
       "collaborator",
       "same-institution"
     ]
