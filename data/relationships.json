@@ -186,5 +186,13 @@
       "advisor-student",
       "collaborator"
     ]
+  },
+  {
+    "id": "r-tianshu-samin",
+    "source": "tianshu-qu",
+    "target": "samin-shaghaghi",
+    "relations": [
+      "same-phd-institution"
+    ]
   }
 ]
