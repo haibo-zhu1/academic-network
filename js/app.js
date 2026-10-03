@@ -95,7 +95,17 @@ function initGraph() {
     maxZoom: 2.2,
     wheelSensitivity: 0.2,
     layout: {
-      name: "preset",
+      name: "cose",
+      animate: true,
+      animationDuration: 700,
+      randomize: false,
+      idealEdgeLength: 380,
+      nodeRepulsion: 32000,
+      edgeElasticity: 45,
+      nestingFactor: 1.0,
+      gravity: 0.06,
+      numIter: 1800,
+      padding: 180,
       fit: false
     },
     style: [
@@ -186,10 +196,10 @@ function initGraph() {
   // Keep the DOM icon strip attached to each relationship line as the graph moves.
   cy.on("render pan zoom position layoutstop", updateEdgeIconMarkers);
 
-  // Open the page directly in the same focused view used after a node click.
-  // requestAnimationFrame makes this reliable on first load and refresh.
-  requestAnimationFrame(() => {
+  cy.one("layoutstop", () => {
+    // Open the page in the exact same focused state as clicking Haibo.
     focusResearcher(HOME_RESEARCHER_ID);
+    setTimeout(updateEdgeIconMarkers, 30);
   });
 }
 
@@ -216,81 +226,45 @@ function focusResearcher(id) {
 
   const neighborhood = node.closedNeighborhood();
 
-  // Keep the selected person's direct relationships visually prominent,
-  // while still showing the rest of the network as context.
+  // Fade everything that is not directly connected to the selected researcher.
   cy.elements().addClass("faded");
   neighborhood.removeClass("faded");
 
-  // Compute each researcher's graph distance from the selected researcher.
-  // Distance 0 = selected researcher, 1 = direct connection, 2 = connection
-  // through one other researcher, etc.
-  const dijkstra = cy.elements().dijkstra({
-    root: node,
-    weight: () => 1,
-    directed: false
-  });
-
-  const distances = new Map();
-  let maxDistance = 0;
-
-  cy.nodes().forEach(n => {
-    const d = dijkstra.distanceTo(n);
-    if (Number.isFinite(d)) {
-      distances.set(n.id(), d);
-      maxDistance = Math.max(maxDistance, d);
-    } else {
-      distances.set(n.id(), Infinity);
-    }
-  });
-
-  // Re-layout the ENTIRE graph around the selected researcher.
-  // The selected researcher occupies the center; direct connections form the
-  // first ring, second-degree connections the next ring, and so on.
-  const focusedLayout = cy.elements().layout({
+  // Re-layout the selected researcher's local network every time it is clicked.
+  // The selected researcher is placed in the center, while direct connections
+  // spread around it in a large ring. This removes the need to manually drag
+  // nodes/edges apart after every refresh.
+  const localLayout = neighborhood.layout({
     name: "concentric",
     animate: true,
-    animationDuration: 560,
+    animationDuration: 520,
     fit: false,
     avoidOverlap: true,
-    minNodeSpacing: 125,
-    spacingFactor: 2.0,
+    minNodeSpacing: 135,
+    spacingFactor: 1.65,
     startAngle: -Math.PI / 2,
     sweep: 2 * Math.PI,
     clockwise: true,
     equidistant: true,
-    padding: 100,
-
-    concentric: ele => {
-      const d = distances.get(ele.id());
-
-      if (!Number.isFinite(d)) {
-        return 0;
-      }
-
-      // Higher values are placed closer to the center.
-      return (maxDistance - d) + 1;
-    },
-
+    padding: 120,
+    concentric: ele => (ele.id() === id ? 2 : 1),
     levelWidth: () => 1,
-
     stop: () => {
-      // Fill most of the graph panel automatically, so no manual dragging
-      // or zooming is needed after a refresh or a node click.
-      cy.fit(cy.elements(), 75);
+      // Make the focused neighborhood occupy most of the available graph area.
+      cy.fit(neighborhood, 90);
 
-      // Avoid oversized nodes when the graph is still small.
-      if (cy.zoom() > 1.12) {
-        cy.zoom(1.12);
-        cy.center(cy.elements());
+      // Prevent very small neighborhoods from becoming excessively zoomed-in.
+      if (cy.zoom() > 1.15) {
+        cy.zoom(1.15);
+        cy.center(neighborhood);
       }
 
       updateEdgeIconMarkers();
     }
   });
 
-  focusedLayout.run();
+  localLayout.run();
 
-  // Update the right-hand profile immediately.
   showResearcher(id);
   setTimeout(updateEdgeIconMarkers, 80);
 }
