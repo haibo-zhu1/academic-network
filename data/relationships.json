@@ -145,5 +145,13 @@
     "relations": [
       "same-phd-institution"
     ]
+  },
+  {
+    "id": "r-haibo-samin",
+    "source": "haibo-zhu",
+    "target": "samin-shaghaghi",
+    "relations": [
+      "same-phd-institution"
+    ]
   }
 ]
