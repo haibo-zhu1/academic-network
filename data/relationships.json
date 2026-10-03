@@ -169,5 +169,22 @@
   "relations": [
     "advisor-student"
   ]
-}
+},
+  {
+    "id": "r-haibo-tianshu",
+    "source": "haibo-zhu",
+    "target": "tianshu-qu",
+    "relations": [
+      "same-phd-institution"
+    ]
+  },
+  {
+    "id": "r-sriram-tianshu",
+    "source": "sriram-venkataraman",
+    "target": "tianshu-qu",
+    "relations": [
+      "advisor-student",
+      "collaborator"
+    ]
+  }
 ]
