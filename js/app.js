@@ -33,11 +33,11 @@ const RELATION_META = {
   }
 };
 
+const HOME_RESEARCHER_ID = "haibo-zhu";
+
 let researchers = [];
 let relationships = [];
 let papers = [];
-const HOME_RESEARCHER_ID = "haibo-zhu";
-
 let cy;
 let edgeIconLayer;
 const edgeIconMarkers = new Map();
@@ -106,7 +106,12 @@ function initGraph() {
       gravity: 0.06,
       numIter: 1800,
       padding: 180,
-      fit: false
+      fit: false,
+      stop: () => {
+        // Once the initial layout is actually finished, open the exact same
+        // focused view that a normal click on Haibo would produce.
+        setTimeout(() => focusResearcher(HOME_RESEARCHER_ID), 0);
+      }
     },
     style: [
       {
@@ -196,11 +201,6 @@ function initGraph() {
   // Keep the DOM icon strip attached to each relationship line as the graph moves.
   cy.on("render pan zoom position layoutstop", updateEdgeIconMarkers);
 
-  cy.one("layoutstop", () => {
-    // Open the page in the exact same focused state as clicking Haibo.
-    focusResearcher(HOME_RESEARCHER_ID);
-    setTimeout(updateEdgeIconMarkers, 30);
-  });
 }
 
 function setInitialView() {
