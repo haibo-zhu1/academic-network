@@ -134,5 +134,17 @@
     "Arizona State University — W. P. Carey Endowed Chair in Supply Chain Management",
     "Clemson University — Burlington Industries Distinguished Professor of Supply Chain Management"
   ]
-}
+},
+  {
+    "id": "tianshu-qu",
+    "name": "Tianshu Qu",
+    "status": "PhD Student",
+    "institution": "University of South Carolina",
+    "position": "PhD Student, Production/Operations Management",
+    "education": "PhD in Business Administration (Production/Operations Management), University of South Carolina, in progress; entered 2024",
+    "phdInstitution": "University of South Carolina",
+    "career": [
+      "University of South Carolina — PhD Student, 2024–present"
+    ]
+  }
 ]
